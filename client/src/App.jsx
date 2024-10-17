@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import  AuthPage  from "../src/lib/pages/auth";
+import  AuthPage  from "./pages/auth";
 
 function App() {
 
