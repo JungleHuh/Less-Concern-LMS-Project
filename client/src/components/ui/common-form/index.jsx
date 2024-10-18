@@ -5,7 +5,15 @@ import { Button } from "@/components/ui/button"
 /* eslint-disable no-undef */
 
 
-function CommonForm({handleSubmit, buttonText, formControls = [], formData, setFormData}) {
+function CommonForm({
+    handleSubmit,
+    buttonText,
+    formControls = [], 
+    formData, 
+    setFormData,
+    //버튼 누르면 disabled
+    isButtonDisabled = false
+    }) {
     return (
         <form onSubmit={handleSubmit}>
         <FormControls
@@ -13,7 +21,7 @@ function CommonForm({handleSubmit, buttonText, formControls = [], formData, setF
             formData={formData}
             setFormData={setFormData}
         />
-        <Button type = "submit">{buttonText || 'Submit'}</Button>    
+        <Button disabled = {isButtonDisabled} type = "submit" className = "mt-5 w-full">{buttonText || 'Submit'}</Button>    
         </form>
       );
 }

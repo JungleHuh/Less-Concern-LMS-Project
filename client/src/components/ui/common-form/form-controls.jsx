@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 function FormControls({ formControls = [], formData, setFormData}) {
     function renderComponentByType(getControlItem){
         let element = null;
+        const currentControlItemValue = formData[getControlItem.name] || '';
+
         switch(getControlItem.componentType) {
             case 'input':
                 element = <Input
@@ -13,11 +15,24 @@ function FormControls({ formControls = [], formData, setFormData}) {
                 name = {getControlItem.name}
                 placeholder = {getControlItem.placeholder}
                 type = {getControlItem.type}
+                onChange = {(event) => setFormData({
+                ...formData,
+                [getControlItem.name] : event.target.value
+                })}
+                
                 />
                 break;
             case 'select':
                 element = (
-                <Select>
+                <Select
+                  onValueChange = {(value) => 
+                    setFormData({
+                      ...formData,
+                      [getControlItem.name]: value
+                      })
+                    }
+                    value = {currentControlItemValue}
+                >
                     <SelectTrigger className = "w-full">
                         <SelectValue placeholder = {getControlItem.label}/>
                     </SelectTrigger>
@@ -39,6 +54,11 @@ function FormControls({ formControls = [], formData, setFormData}) {
                 id = {getControlItem.name}
                 name = {getControlItem.name}
                 placeholder = {getControlItem.placeholder}
+                value = {currentControlItemValue}
+                onChange = {(event) => setFormData({
+                ...formData,
+                [getControlItem.name] : event.target.value
+                })}
 
                 />
                 );
@@ -50,11 +70,16 @@ function FormControls({ formControls = [], formData, setFormData}) {
                 name = {getControlItem.name}
                 placeholder = {getControlItem.placeholder}
                 type = {getControlItem.type}
+                value = {currentControlItemValue}
+                onChange = {(event) => setFormData({
+                  ...formData,
+                  [getControlItem.name] : event.target.value
+                })}
                 />
                 )             
                 break;
         }
-        return element;  // 이 줄을 추가했습니다.
+        return element;  
     }
     return (
         <div className="flex flex-col gap-3">

@@ -1,15 +1,42 @@
 import { GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { TabsTrigger, TabsList, TabsContent,Tabs } from "@radix-ui/react-tabs";
 import CommonForm from "@/components/ui/common-form";
-import { singUpFormControls } from "@/config";
+import { singInFormControls, singUpFormControls } from "../../config";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { AuthContext } from "../../context/auth-context";
+
 
 function AuthPage(){
-    const [activeTab, setActiveTab] =  useState('signIn')
+    const [activeTab, setActiveTab] =  useState('signIn');
+    const {
+        signInFormData,
+        setSignInFormData,
+        signUpFormData,
+        setSignUpFormData,
+        handleRegisterUser,
+        } = useContext(AuthContext);
 
     function handleTabChange(value){
         setActiveTab(value);
+    }
+    // 이메일, 패스워드 형식에 알맞은 것만 통과
+    function checkIfSignInFormIsValid(){
+        return(
+            signInFormData &&
+            signInFormData.userEmail !== "" &&
+            signInFormData.password !== ""
+        )
+    }
+
+    function checkIfSignUpFormIsValid(){
+        return(
+            signUpFormData &&
+            signUpFormData.userName !== "" &&
+            signUpFormData.userEmail !== "" &&
+            signUpFormData.password !== ""
+        )
     }
 
     return (
@@ -31,12 +58,43 @@ function AuthPage(){
                     <TabsTrigger value = 'signIn'>Sign In</TabsTrigger>
                     <TabsTrigger value = 'signUp'>Sign Up</TabsTrigger>
                 </TabsList>
-                <TabsContent value = "signIn">signIn</TabsContent>
+                <TabsContent value = "signIn">
+                    <Card className = "p-6 space-y-4">
+                        <CardHeader>
+                            <CardTitle>Sign In </CardTitle>
+                            <CardDescription>Enter your Email and PassWord to Access</CardDescription>
+                        </CardHeader>
+                        <CardContent className ="space-y-2">
+                            <CommonForm
+                            formControls = {singInFormControls}
+                            buttonText = {'Sign In'}
+                            formData = {signInFormData}
+                            setFormData = {setSignInFormData}
+                            isButtonDisabled = {!checkIfSignInFormIsValid()}
+                            />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
                 <TabsContent value = "signUp">
+                <Card className="p-6 space-y-4">
+              <CardHeader>
+                <CardTitle>Create a new account</CardTitle>
+                <CardDescription>
+                  Enter your details to get started
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
                     <CommonForm 
-                        formControls={singUpFormControls}/>
-                        signUp
-                        </TabsContent>
+                    formControls={singUpFormControls}
+                    buttonText = {'Sign Up'}
+                    formData = {signUpFormData}
+                    setFormData = {setSignUpFormData}
+                    isButtonDisabled = {!checkIfSignUpFormIsValid()}
+                    handleSubmit = {handleRegisterUser}
+                    />
+                    </CardContent>
+                    </Card>
+                </TabsContent>
             </Tabs>
         </div>
     </div>
