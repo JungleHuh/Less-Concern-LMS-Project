@@ -2,7 +2,7 @@ import { GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
 import { TabsTrigger, TabsList, TabsContent,Tabs } from "@radix-ui/react-tabs";
-import CommonForm from "@/components/ui/common-form";
+import CommonForm from "@/components/common-form";
 import { singInFormControls, singUpFormControls } from "../../config";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { AuthContext } from "../../context/auth-context";
@@ -16,6 +16,7 @@ function AuthPage(){
         signUpFormData,
         setSignUpFormData,
         handleRegisterUser,
+        handleLoginUser,
         } = useContext(AuthContext);
 
     function handleTabChange(value){
@@ -71,6 +72,7 @@ function AuthPage(){
                             formData = {signInFormData}
                             setFormData = {setSignInFormData}
                             isButtonDisabled = {!checkIfSignInFormIsValid()}
+                            handleSubmit = {handleLoginUser}
                             />
                         </CardContent>
                     </Card>
