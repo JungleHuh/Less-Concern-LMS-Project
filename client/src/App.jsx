@@ -4,7 +4,9 @@ import AuthPage from "./pages/auth";
 import RouteGuard from "./components/route-gaurd/index";
 import { AuthContext } from "./context/auth-context";
 import InstructorDashboardpage from "./pages/instructor";
-
+import StudentViewCommonLayout from "./components/student-view/common-layout";
+import StudentHomePage from "./pages/student/home";
+import NotFoundPage from "./pages/not-found"
 
 function App() {
   const { auth } = useContext(AuthContext);
@@ -16,8 +18,7 @@ function App() {
         element={
           <RouteGuard
             element={<AuthPage />}
-            authenticated={auth?.authenticated} // 'authenticate'를 'authenticated'로 수정
-            user={auth?.user}
+            authenticate={auth?.authenticate}
           />
         }
       />
@@ -26,11 +27,37 @@ function App() {
         element={
           <RouteGuard
             element={<InstructorDashboardpage />}
-            authenticated={auth?.authenticated} // 'authenticate'를 'authenticated'로 수정
+            authenticate ={auth?.authenticate}
             user={auth?.user}
           />
         }
       />
+      <Route
+        path="/"
+        element={
+          <RouteGuard
+            element={<StudentViewCommonLayout />}
+            authenticate={auth?.authenticate}
+            user={auth?.user}
+          />
+        }
+        >
+      <Route
+        path = ""
+        element={<StudentHomePage/>}    
+          />
+      <Route 
+        path ="home"
+        element = {<StudentHomePage/>}
+          /> 
+
+        </Route>
+      <Route
+      path ="*"
+      element = {<NotFoundPage/>}
+        />
+      <Route/>
+
     </Routes>
   );
 }

@@ -1,5 +1,9 @@
 function StudentHomePage() {
-    return (  );
+    return ( 
+        <div>
+            HomePage
+         </div>
+     );
 }
 
 export default StudentHomePage;
