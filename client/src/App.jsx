@@ -8,6 +8,15 @@ import StudentViewCommonLayout from "./components/student-view/common-layout";
 import StudentHomePage from "./pages/student/home";
 import NotFoundPage from "./pages/not-found"
 import AddNewCoursePage from "./pages/instructor/add-new-course";
+import Community from "./pages/community";
+import StudentDashboard from "./pages/student/learning-dashboard";
+import Cpa from "./pages/community/community-cpa";
+import Law from "./pages/community/community-law";
+import Tax from "./pages/community/community-tax";
+import ExamBoard from "./components/community/ExamBoard";
+
+
+
 
 function App() {
   const { auth } = useContext(AuthContext);
@@ -68,6 +77,16 @@ function App() {
       element = {<NotFoundPage/>}
         />
       <Route/>
+
+      <Route path="/community" element={<Community />} />
+      <Route path="/community/:examType" element={<ExamBoard />} />
+
+      <Route
+        path="/student/learning-dashboard"
+        element = {<StudentDashboard/>}
+        >
+
+        </Route>
 
     </Routes>
   );
