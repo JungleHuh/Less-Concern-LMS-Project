@@ -10,11 +10,9 @@ import NotFoundPage from "./pages/not-found"
 import AddNewCoursePage from "./pages/instructor/add-new-course";
 import Community from "./pages/community";
 import StudentDashboard from "./pages/student/learning-dashboard";
-import Cpa from "./pages/community/community-cpa";
-import Law from "./pages/community/community-law";
-import Tax from "./pages/community/community-tax";
 import ExamBoard from "./components/community/ExamBoard";
-
+import WritePost from "./components/community/board-function/write";
+import PostDetail from './pages/community/community-view.jsx'
 
 
 
@@ -78,8 +76,19 @@ function App() {
         />
       <Route/>
 
-      <Route path="/community" element={<Community />} />
+      <Route 
+      path="/community" 
+      element= {<RouteGuard
+      element = {<Community />}
+      authenticate ={auth?.authenticate}
+      user={auth?.user}
+      />
+      }
+      />
+
       <Route path="/community/:examType" element={<ExamBoard />} />
+      <Route path="/community/:examType/write" element={<WritePost />} />
+      <Route path="/community/:examType/post/:postId" element={<PostDetail />} />
 
       <Route
         path="/student/learning-dashboard"

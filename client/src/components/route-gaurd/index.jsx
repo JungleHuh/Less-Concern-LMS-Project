@@ -16,7 +16,7 @@ function RouteGuard({ authenticate, user, element }) {
     (location.pathname.includes("instructor") ||
       location.pathname.includes("/auth"))
   ) {
-    return <Navigate to="/home" />;
+    return <Navigate to="/community" />;
   }
 
   if (

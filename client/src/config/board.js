@@ -1,38 +1,44 @@
-// constants/examConfig.js
 export const EXAM_CONFIG = {
-    cpa: {
-      id: 1,
+  cpa: {
+      id: 'cpa',
       type: 'cpa',
       name: '공인회계사',
-      categories: ['시험정보', '수험생광장', '합격수기', '문제풀이', '스터디'],
-      description: '공인회계사 수험생들을 위한 커뮤니티입니다.'
-    },
-    law: {
-      id: 2,
-      type: 'law',
-      name: '변호사시험',
-      categories: ['시험공고', '로스쿨', '합격수기', '판례강의', '스터디'],
-      description: '변호사시험 수험생들을 위한 커뮤니티입니다.'
-    },
-    tax: {
-      id: 3,
+      title: '공인회계사',
+      description: '공인회계사 시험 게시판입니다.',
+      categories: ['수험생광장', '합격수기', '자료실', '공지사항']
+  },
+  law: {
+    id: 'law',
+    type: 'law',
+    name: '변호사',
+    title: '변호사',
+    description: '변호사 시험 게시판입니다.',
+    categories: ['수험생광장', '합격수기', '자료실', '공지사항']
+  },
+
+  tax: {
+      id: 'tax',
       type: 'tax',
       name: '세무사',
-      categories: ['시험정보', '수험생광장', '합격수기', '문제풀이', '스터디'],
-      description: '세무사 수험생들을 위한 커뮤니티입니다.'
-    },
-    patent: {
-      id: 4,
+      title: '세무사',
+      description: '세무사 시험 게시판입니다.',
+      categories: ['수험생광장', '합격수기', '자료실', '공지사항']
+  },
+  labor: {
+      id: 'labor',
+      type: 'labor',
+      name: '공인노무사',
+      title: '공인노무사',
+      description: '공인노무사 시험 게시판입니다.',
+      categories: ['수험생광장', '합격수기', '자료실', '공지사항']
+  },
+  patent: {
+      id: 'patent',
       type: 'patent',
       name: '변리사',
-      categories: ['시험정보', '수험생광장', '합격수기', '문제풀이', '스터디'],
-      description: '변리사 수험생들을 위한 커뮤니티입니다.'
-    },
-    labor: {
-      id: 5,
-      type: 'labor',
-      name: '노무사',
-      categories: ['시험정보', '수험생광장', '합격수기', '문제풀이', '스터디'],
-      description: '노무사 수험생들을 위한 커뮤니티입니다.'
-    }
-  };
+      title: '변리사',
+      description: '변리사 시험 게시판입니다.',
+      categories: ['수험생광장', '합격수기', '자료실', '공지사항']
+
+  }
+};

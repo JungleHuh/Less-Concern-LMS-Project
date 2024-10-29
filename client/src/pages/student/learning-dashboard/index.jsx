@@ -7,6 +7,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { Brain, Book, Trophy, Clock } from 'lucide-react';
 
+
 const StudentDashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   
