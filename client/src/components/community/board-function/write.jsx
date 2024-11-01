@@ -1,4 +1,3 @@
-// src/pages/WritePost.jsx
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { EXAM_CONFIG } from '@/config/board';

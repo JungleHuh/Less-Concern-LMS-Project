@@ -13,6 +13,8 @@ import StudentDashboard from "./pages/student/learning-dashboard";
 import ExamBoard from "./components/community/ExamBoard";
 import WritePost from "./components/community/board-function/write";
 import PostDetail from './pages/community/community-view.jsx'
+import MyPage from "./pages/community/community-view.jsx/mypage";
+import EditPost from "./components/community/board-function/edit";
 
 
 
@@ -89,6 +91,28 @@ function App() {
       <Route path="/community/:examType" element={<ExamBoard />} />
       <Route path="/community/:examType/write" element={<WritePost />} />
       <Route path="/community/:examType/post/:postId" element={<PostDetail />} />
+
+      <Route
+  path="/mypage"
+  element={
+    <RouteGuard
+      element={<MyPage />}
+      authenticate={auth?.authenticate}
+      user={auth?.user}
+    />
+  }
+/>
+
+<Route 
+  path="/community/:examType/edit/:postId" 
+  element={
+    <RouteGuard
+      element={<EditPost />}
+      authenticate={auth?.authenticate}
+      user={auth?.user}
+    />
+  }
+/>
 
       <Route
         path="/student/learning-dashboard"

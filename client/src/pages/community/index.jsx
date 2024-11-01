@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { AuthContext } from '@/context/auth-context';
 import {
  Card,
@@ -7,13 +7,13 @@ import {
  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from 'react-router-dom';
 import { EXAM_CONFIG } from '@/config/board';
 import ExamBoard from '@/components/community/ExamBoard';
 import PostDetail from './community-view.jsx';
+import { toast } from '@/hooks/use-toast.js';
 
 export default function ExamCommunityHome() {
    const { auth, resetCredentials } = useContext(AuthContext);
@@ -32,20 +32,11 @@ export default function ExamCommunityHome() {
 
    // 게시판 선택 핸들러
    const handleBoardClick = (board) => {
-    /* {게시판 안뜨는거 디버깅}
-    console.log('Clicked board:', board);  // 클릭된 게시판 정보
-    console.log('Board type:', board.type);  // 게시판 타입
-    console.log('EXAM_CONFIG:', EXAM_CONFIG);  // 설정 객체
-    console.log('Found board config:', EXAM_CONFIG[board.type]);  // 찾은 설정
-
+    console.log('Clicked board:', board);  // 디버깅용
+    
     if (EXAM_CONFIG[board.type]) {
-        setSelectedBoard(board);
-        setSelectedPost(null);
-    } else {
-        console.log('Board not found in config');  // 설정에서 찾지 못함
-    }
-    */
-    if (EXAM_CONFIG[board.type]) {  // 유효한 게시판인지 확인
+        // URL 이동 추가
+        navigate(`/community/${board.type}`);
         setSelectedBoard(board);
         setSelectedPost(null);
     } else {
@@ -130,7 +121,7 @@ export default function ExamCommunityHome() {
                                <div className="space-y-4">
                                    <div className="flex items-center justify-between">
                                        <div>
-                                           <h3 className="font-medium">{auth.user.username}님</h3>
+                                           <h3 className="font-medium">{auth.user.userName}님</h3>
                                            <p className="text-sm text-muted-foreground">
                                                {auth.user.email}
                                            </p>
@@ -206,31 +197,30 @@ export default function ExamCommunityHome() {
                        </CardContent>
                    </Card>
 
-                   {/* 시험별 게시판 */}
                    <Card>
-                       <CardHeader>
-                           <CardTitle className="text-lg">
-                               📚 시험별 게시판
-                           </CardTitle>
-                       </CardHeader>
-                       <CardContent className="p-0">
-                           {examBoards.map(board => (
-                               <div 
-                               key={board.id}
-                               className="flex items-center justify-between px-4 py-2 hover:bg-accent cursor-pointer"
-                               onClick={() => handleBoardClick(board)}  // navigate 대신 handleBoardClick 사용
-                           >
-                               <span className="flex items-center gap-2">
-                                   ✏️ {board.name}
-                               </span>
-                               <div className="flex items-center gap-2">
-                                   <Badge variant="outline">{board.upcomingDate}</Badge>
-                                   <Badge variant="secondary">{board.posts}</Badge>
-                               </div>
-                           </div>
-                           ))}
-                       </CardContent>
-                   </Card>
+    <CardHeader>
+        <CardTitle className="text-lg">
+            📚 시험별 게시판
+        </CardTitle>
+    </CardHeader>
+    <CardContent className="p-0">
+        {examBoards.map(board => (
+            <div 
+                key={board.id}
+                className="flex items-center justify-between px-4 py-2 hover:bg-accent cursor-pointer"
+                onClick={() => handleBoardClick(board)}
+            >
+                <span className="flex items-center gap-2">
+                    ✏️ {board.name}
+                </span>
+                <div className="flex items-center gap-2">
+                    <Badge variant="outline">{board.upcomingDate}</Badge>
+                    <Badge variant="secondary">{board.posts}</Badge>
+                </div>
+            </div>
+        ))}
+    </CardContent>
+</Card>
                </div>
 
                {/* 메인 컨텐츠 */}

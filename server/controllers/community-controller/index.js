@@ -37,19 +37,53 @@ exports.createPost = async (req, res) => {
     }
 };
 
-// 게시글 목록 조회
+// 게시글 목록 조회: 안된 코드
+/*
 exports.getPosts = async (req, res) => {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 });
+        const { examType } = req.params;  // URL 파라미터에서 examType 가져오기
+        console.log('Fetching posts for examType:', examType);  // 디버깅용
+
+        // examType에 해당하는 게시글만 조회
+        const posts = await Post.find({ examType }).sort({ createdAt: -1 });
         
         res.json({
             success: true,
             data: posts
         });
     } catch (error) {
+        console.error('Error:', error);
         res.status(500).json({
             success: false,
-            message: error.message
+            message: error.message || '게시글을 불러오는데 실패했습니다.'
+        });
+    }
+};
+*/
+exports.getPosts = async (req, res) => {
+    try {
+        const { examType } = req.query;  // URL 쿼리에서 examType 가져오기
+        console.log('Fetching posts with examType:', examType); // 디버깅용
+
+        let query = {};
+        if (examType) {
+            query.examType = examType;
+        }
+
+        console.log('Query:', query); // 디버깅용
+
+        const posts = await Post.find(query).sort({ createdAt: -1 });
+        console.log('Found posts:', posts); // 디버깅용
+        
+        res.json({
+            success: true,
+            data: posts
+        });
+    } catch (error) {
+        console.error('Error in getPosts:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '게시글을 불러오는데 실패했습니다.'
         });
     }
 };

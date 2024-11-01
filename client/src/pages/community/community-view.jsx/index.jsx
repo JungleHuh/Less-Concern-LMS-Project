@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPost, deletePost } from '@/services/posts';
+import { getComments } from '@/services/comment';
 import { EXAM_CONFIG } from '@/config/board';
 import { toast } from "react-hot-toast";
 import {
@@ -14,12 +15,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import Comments from '@/components/community/board-function/comment';
 
 function PostDetail() {
   const navigate = useNavigate();
   const { examType, postId } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -40,6 +43,18 @@ function PostDetail() {
 
     fetchPost();
   }, [postId, examType]);
+
+  //댓글
+  const fetchComments = async () => {
+    const response = await getComments(postId);
+    if (response.success) {
+        setComments(response.data);
+    }
+};
+
+useEffect(() => {
+    fetchComments();
+}, [postId]);
 
   const handleDelete = async () => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
@@ -105,6 +120,23 @@ function PostDetail() {
           </Button>
         </div>
       </CardFooter>
+
+      <Separator />
+
+      <CardContent className="py-6">
+                <div className="mb-4">
+                    <h3 className="text-lg font-semibold">
+                        댓글 {comments.length}개
+                    </h3>
+                </div>
+                <Comments 
+                    postId={postId} 
+                    comments={comments} 
+                    onCommentUpdate={fetchComments}
+                />
+            </CardContent>
+      
+
     </Card>
   );
 }
