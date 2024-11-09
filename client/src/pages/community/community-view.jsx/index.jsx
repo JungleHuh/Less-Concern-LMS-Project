@@ -1,4 +1,3 @@
-// src/components/PostDetail.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPost, deletePost } from '@/services/posts';

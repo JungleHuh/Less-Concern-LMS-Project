@@ -62,7 +62,7 @@ const registerUser = async(req,res) =>{
                 accessToken,
                 user : {
                     _id: checkUser._id,
-                    userName: checkUser.userNmae,
+                    userName: checkUser.userName,
                     userEmail: checkUser.userEmail,
                     role: checkUser.role
                 },

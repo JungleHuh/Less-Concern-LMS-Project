@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth-routes/index');
 const mediaRoutes = require('./routes/instructor-routes/media-routes');
 const communityRoutes = require('./routes/community-routes/index');
+const mentorRoutes = require('./routes/mentor-routes/index');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,6 +31,8 @@ mongoose.connect(MONGO_URI)
 app.use('/auth', authRoutes);
 app.use('/media', mediaRoutes);
 app.use('/api', communityRoutes);
+app.use('/api/mentoring', mentorRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use((err, req, res, next )=> {
     console.log(err.stack)

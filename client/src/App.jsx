@@ -15,6 +15,11 @@ import WritePost from "./components/community/board-function/write";
 import PostDetail from './pages/community/community-view.jsx'
 import MyPage from "./pages/community/community-view.jsx/mypage";
 import EditPost from "./components/community/board-function/edit";
+import { Toaster } from "@/components/ui/toaster";
+import LecturePage from "./pages/lectures";
+import MentorRegisterPage from "./pages/mentoring/register";
+import MentoringListPage from "./pages/mentoring";
+
 
 
 
@@ -22,7 +27,8 @@ function App() {
   const { auth } = useContext(AuthContext);
 
   return (
-    <Routes>
+    <>
+        <Routes>
       <Route
         path="/auth"
         element={
@@ -62,6 +68,7 @@ function App() {
           />
         }
         >
+    
       <Route
         path = ""
         element={<StudentHomePage/>}    
@@ -121,7 +128,28 @@ function App() {
 
         </Route>
 
+      <Route
+      path = "/lectures/:examType"
+      element = {<LecturePage />}
+      />
+
+      <Route
+      path = "/mentoring/:examType"
+      element = {<MentoringListPage />}
+      />  
+
+      <Route
+      path = "/mentoring"
+      element = {<MentorRegisterPage/>}
+      />
+
     </Routes>
+
+   
+
+    <Toaster />
+    </>
+
   );
 }
 

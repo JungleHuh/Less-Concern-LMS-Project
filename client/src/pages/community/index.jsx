@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '@/context/auth-context';
 import {
  Card,
@@ -14,14 +14,35 @@ import { EXAM_CONFIG } from '@/config/board';
 import ExamBoard from '@/components/community/ExamBoard';
 import PostDetail from './community-view.jsx';
 import { toast } from '@/hooks/use-toast.js';
+import { getUserStats } from '@/services/mypage.js';
+import Navbar from '@/components/layout'
 
 export default function ExamCommunityHome() {
    const { auth, resetCredentials } = useContext(AuthContext);
    const navigate = useNavigate();
    const [selectedBoard, setSelectedBoard] = useState(null);
    const [selectedPost, setSelectedPost] = useState(null);
+   const [stats, setStats] = useState(null);
+   const [loading, setLoading] = useState(true);
 
-   console.log("현재 auth 상태:", auth);
+   useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await getUserStats();
+        if (response.success) {
+          setStats(response.data);
+        } else {
+          toast.error(response.error);
+        }
+      } catch (error) {
+        toast.error('통계를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+ 
+    fetchStats();
+  }, []);
 
    const handleLogout = () => {
        if(window.confirm('로그아웃 하시겠습니까?')) {
@@ -110,6 +131,9 @@ export default function ExamCommunityHome() {
                </div>
            </div>
 
+           <Navbar />
+           
+
            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                {/* 왼쪽 사이드바 */}
                <div className="lg:col-span-1 space-y-6">
@@ -121,9 +145,9 @@ export default function ExamCommunityHome() {
                                <div className="space-y-4">
                                    <div className="flex items-center justify-between">
                                        <div>
-                                           <h3 className="font-medium">{auth.user.userName}님</h3>
+                                           <h3 className="font-medium">{auth.user?.userName}님</h3>
                                            <p className="text-sm text-muted-foreground">
-                                               {auth.user.email}
+                                               {auth.user.userEmail}
                                            </p>
                                        </div>
                                        <Button 
@@ -156,15 +180,15 @@ export default function ExamCommunityHome() {
 
                                    <div className="space-y-2">
                                        <div className="flex justify-between text-sm">
-                                           <span>내 게시글</span>
+                                           <span>내 게시글 </span>
                                            <span className="font-medium">
-                                               {auth.user.posts || 0}개
+                                                {stats?.postsCount || 0}개
                                            </span>
                                        </div>
                                        <div className="flex justify-between text-sm">
                                            <span>내 댓글</span>
                                            <span className="font-medium">
-                                               {auth.user.comments || 0}개
+                                               {stats?.postsComment || 0}개
                                            </span>
                                        </div>
                                    </div>

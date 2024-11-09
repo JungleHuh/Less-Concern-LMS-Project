@@ -1,4 +1,3 @@
-// src/pages/mypage/index.jsx
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '@/context/auth-context';
@@ -53,7 +52,7 @@ export default function MyPage() {
          <div className="grid gap-4">
            <div>
              <h3 className="font-medium text-lg">{auth.user?.userName}</h3>
-             <p className="text-muted-foreground">{auth.user?.email}</p>
+             <p className="text-muted-foreground">{auth.user?.userEmail}</p>
            </div>
            <Separator />
            <div className="space-y-2">

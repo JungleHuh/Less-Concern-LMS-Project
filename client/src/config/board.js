@@ -1,3 +1,4 @@
+//client/src/config/board.js
 export const EXAM_CONFIG = {
   cpa: {
       id: 'cpa',
