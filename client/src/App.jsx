@@ -21,9 +21,7 @@ import MentorRegisterPage from "./pages/mentoring/register";
 import MentoringListPage from "./pages/mentoring";
 import LectureRegisterPage from "./pages/lectures/register";
 import LectureViewPage from "./pages/lectures/view/lecture-view";
-
-
-
+import LearningSpacePage from "./pages/lectures/mylecture";
 
 function App() {
   const { auth } = useContext(AuthContext);
@@ -153,6 +151,11 @@ function App() {
       <Route 
       path = "/lecture/view/:lectureId"
       element = {<LectureViewPage />}
+      />
+
+      <Route 
+      path = "/learning-space"
+      element = {<LearningSpacePage />}
       />
 
     </Routes>
