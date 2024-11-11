@@ -19,6 +19,7 @@ import { Toaster } from "@/components/ui/toaster";
 import LecturePage from "./pages/lectures";
 import MentorRegisterPage from "./pages/mentoring/register";
 import MentoringListPage from "./pages/mentoring";
+import LectureRegisterPage from "./pages/lectures/register";
 
 
 
@@ -131,6 +132,11 @@ function App() {
       <Route
       path = "/lectures/:examType"
       element = {<LecturePage />}
+      />
+
+      <Route
+      path = "/lectures/register"
+      element = {<LectureRegisterPage/>}
       />
 
       <Route
