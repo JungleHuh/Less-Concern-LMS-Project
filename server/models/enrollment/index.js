@@ -24,11 +24,18 @@ const enrollmentSchema = new mongoose.Schema({
   progress: {
     completedVideos: [{
       videoId: String,
+      progress: Number,
+      timestamp: Number,
       completedAt: Date
     }],
     lastWatched: {
       videoId: String,
-      timestamp: Number
+      timestamp: Number,
+      updatedAt: Date
+    },
+    totalProgress: {
+      type: Number,
+      default: 0
     }
   }
 }, {

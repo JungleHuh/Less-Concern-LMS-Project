@@ -86,3 +86,19 @@ export const getMyLecturesService = async () => {
     );
   }
 };
+
+//진도율 업데이트 
+
+export const updateProgressService = async (lectureId, videoId, progress) => {
+  try {
+    const { data } = await axiosInstance.post(`/api/lectures/${lectureId}/progress`, {
+      videoId,
+      progress,
+      timestamp: progress.playedSeconds,
+      completed: progress.played >= 0.9 // 90% 이상 시청시 완료로 간주
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || '진도율 업데이트에 실패했습니다.');
+  }
+};

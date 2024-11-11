@@ -350,3 +350,78 @@ exports.deleteLecture = async (req, res) => {
     });
   }
 };
+
+exports.updateProgress = async (req, res) => {
+  try {
+    const { lectureId } = req.params;
+    const { videoId, progress, timestamp, completed } = req.body;
+    const userId = req.user._id;
+
+    // 수강 신청 확인
+    const enrollment = await Enrollment.findOne({
+      user: userId,
+      lecture: lectureId
+    });
+
+    if (!enrollment) {
+      return res.status(404).json({
+        success: false,
+        message: '수강 신청 정보를 찾을 수 없습니다.'
+      });
+    }
+
+    // 비디오 진도율 업데이트
+    const videoProgress = enrollment.progress.completedVideos.find(
+      v => v.videoId === videoId
+    );
+
+    if (videoProgress) {
+      // 기존 진도율 업데이트
+      videoProgress.progress = progress;
+      videoProgress.timestamp = timestamp;
+      if (completed && !videoProgress.completedAt) {
+        videoProgress.completedAt = new Date();
+      }
+    } else {
+      // 새로운 진도율 추가
+      enrollment.progress.completedVideos.push({
+        videoId,
+        progress,
+        timestamp,
+        completedAt: completed ? new Date() : null
+      });
+    }
+
+    // 마지막 시청 정보 업데이트
+    enrollment.progress.lastWatched = {
+      videoId,
+      timestamp,
+      updatedAt: new Date()
+    };
+
+    // 전체 진도율 계산
+    const lecture = await Lecture.findById(lectureId);
+    const totalVideos = lecture.videos.length;
+    const completedVideos = enrollment.progress.completedVideos.filter(
+      v => v.completedAt
+    ).length;
+    enrollment.progress.totalProgress = (completedVideos / totalVideos) * 100;
+
+    await enrollment.save();
+
+    res.json({
+      success: true,
+      data: {
+        progress: enrollment.progress,
+        totalProgress: enrollment.progress.totalProgress
+      }
+    });
+
+  } catch (error) {
+    console.error('Progress update error:', error);
+    res.status(500).json({
+      success: false,
+      message: '진도율 업데이트에 실패했습니다.'
+    });
+  }
+};
