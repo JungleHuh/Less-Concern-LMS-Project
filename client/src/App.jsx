@@ -20,6 +20,7 @@ import LecturePage from "./pages/lectures";
 import MentorRegisterPage from "./pages/mentoring/register";
 import MentoringListPage from "./pages/mentoring";
 import LectureRegisterPage from "./pages/lectures/register";
+import LectureViewPage from "./pages/lectures/view/lecture-view";
 
 
 
@@ -147,6 +148,11 @@ function App() {
       <Route
       path = "/mentoring"
       element = {<MentorRegisterPage/>}
+      />
+
+      <Route 
+      path = "/lecture/view/:lectureId"
+      element = {<LectureViewPage />}
       />
 
     </Routes>
