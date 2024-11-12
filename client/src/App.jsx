@@ -22,6 +22,9 @@ import MentoringListPage from "./pages/mentoring";
 import LectureRegisterPage from "./pages/lectures/register";
 import LectureViewPage from "./pages/lectures/view/lecture-view";
 import LearningSpacePage from "./pages/lectures/mylecture";
+import QuestionForm from "@/pages/questions/index";
+import QuestionList from "@/pages/questions/questionList";
+import QuestionDetail from "@/pages/questions/questionDetail";
 
 function App() {
   const { auth } = useContext(AuthContext);
@@ -157,6 +160,10 @@ function App() {
       path = "/learning-space"
       element = {<LearningSpacePage />}
       />
+
+      <Route path="/questions" element={<QuestionList />} />
+      <Route path="/questions/new" element={<QuestionForm />} />
+      <Route path="/questions/:questionId" element={<QuestionDetail />} />
 
     </Routes>
 

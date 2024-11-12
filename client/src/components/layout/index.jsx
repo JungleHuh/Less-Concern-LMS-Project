@@ -89,6 +89,19 @@ return (
         <span className="font-medium">멘토 등록</span>
       </div>
         </div>
+        {/* 문제 질문 AI */}
+      <div 
+      className="relative"
+      onMouseEnter={() => setActiveMenu('mentor-register')}
+      onMouseLeave={() => setActiveMenu(null)}
+      >
+        <div 
+          className="px-4 py-3 cursor-pointer hover:bg-accent transition-colors"
+          onClick={() => navigate('/questions')}
+        >
+        <span className="font-medium">질문게시판</span>
+      </div>
+        </div>
       </div>
     </div>
   </div>

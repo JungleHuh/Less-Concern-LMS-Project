@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -7,11 +7,21 @@ const mediaRoutes = require('./routes/instructor-routes/media-routes');
 const communityRoutes = require('./routes/community-routes/index');
 const mentorRoutes = require('./routes/mentor-routes/index');
 const lectureRoutes = require('./routes/lecture-routes/index');
+const questionRoutes = require('./routes/question-routes/index');
+
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
+
+/*
+console.log('Environment variables:', {
+    PYTHON_PATH: process.env.PYTHON_PATH,
+    NODE_ENV: process.env.NODE_ENV
+  });
+
+  */
 
 app.use(cors({
     origin: process.env.CLIENT_URL,
@@ -35,6 +45,8 @@ app.use('/api', communityRoutes);
 app.use('/api/mentoring', mentorRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/lectures', lectureRoutes);
+
+app.use('/api/questions', questionRoutes);
 
 
 app.use((err, req, res, next )=> {
