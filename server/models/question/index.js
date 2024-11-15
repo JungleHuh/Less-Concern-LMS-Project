@@ -1,4 +1,3 @@
-// server/models/question.js
 const mongoose = require('mongoose');
 
 const questionSchema = new mongoose.Schema({
@@ -10,18 +9,31 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  imageUrl: String,           // 원본 이미지 URL
-  extractedText: String,      // 추출된 텍스트
+  imageUrl: String,           
+  extractedText: String,      
+  analysis: {                // 추가: AI 분석 결과
+    omniparserResult: String,  // OmniParser 분석 결과
+    openaiAnalysis: {          // OpenAI 분석 결과
+      coreConcepts: String,      // 핵심 개념
+      solution: String,          // 해결 방법
+      relatedConcepts: String,   // 관련 개념
+      learningPoints: String     // 학습 포인트
+    },
+    timestamp: {              // 분석 시간
+      type: Date,
+      default: Date.now
+    }
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  examType: {                // 시험 유형 (CPA, 세무사 등)
+  examType: {                
     type: String,
     required: true
   },
-  subject: String,           // 과목 (재무회계, 세법 등)
+  subject: String,           
   status: {
     type: String,
     enum: ['pending', 'resolved'],

@@ -18,3 +18,9 @@ build/
 # IDE 관련
 .vscode/
 .idea/
+
+# 모듈
+*.node_modules
+
+server/node_modules/
+server/node_modules/**/*

@@ -1,7 +1,10 @@
-// pages/questions/QuestionDetail.jsx
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getQuestionByIdService, addAnswerService } from '@/services/question';
+import { 
+  getQuestionByIdService, 
+  addAnswerService,
+  analyzeQuestionService 
+} from '@/services/question';
 import { useToast } from "@/hooks/use-toast";
 import {
   Card,
@@ -12,11 +15,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Loader2 } from "lucide-react";
 
 export default function QuestionDetail() {
   const { questionId } = useParams();
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [analyzing, setAnalyzing] = useState(false);
   const [answer, setAnswer] = useState('');
   const { toast } = useToast();
 
@@ -41,6 +46,30 @@ export default function QuestionDetail() {
 
     fetchQuestion();
   }, [questionId, toast]);
+
+  const handleAnalyze = async () => {
+    try {
+      setAnalyzing(true);
+      const response = await analyzeQuestionService(questionId);
+      if (response.success) {
+        // 분석 후 질문 정보 새로고침
+        const updatedQuestion = await getQuestionByIdService(questionId);
+        setQuestion(updatedQuestion.data);
+        toast({
+          title: "분석 완료",
+          description: "AI 분석이 완료되었습니다."
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "오류",
+        description: "AI 분석에 실패했습니다."
+      });
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   const handleSubmitAnswer = async () => {
     try {
@@ -111,6 +140,67 @@ export default function QuestionDetail() {
           <div className="prose max-w-none">
             <p>{question.content}</p>
           </div>
+
+          {/* AI 분석 섹션 */}
+          {question.imageUrl && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="font-medium">AI 분석</h3>
+                <Button 
+                  onClick={handleAnalyze}
+                  disabled={analyzing}
+                  variant="outline"
+                >
+                  {analyzing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      분석 중...
+                    </>
+                  ) : (
+                    'AI 분석'
+                  )}
+                </Button>
+              </div>
+
+              {question.analysis && (
+                <div className="bg-muted p-4 rounded-lg space-y-4">
+                  {/* OmniParser 결과 */}
+                  {question.analysis.omniparserResult && (
+                    <div>
+                      <h4 className="font-medium mb-2">이미지 분석 결과</h4>
+                      <p className="text-sm">{question.analysis.omniparserResult}</p>
+                    </div>
+                  )}
+
+                  {/* OpenAI 분석 */}
+                  {question.analysis.openaiAnalysis && (
+                    <>
+                      <div>
+                        <h4 className="font-medium mb-2">핵심 개념</h4>
+                        <p className="text-sm">{question.analysis.openaiAnalysis.coreConcepts}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">해결 방법</h4>
+                        <p className="text-sm">{question.analysis.openaiAnalysis.solution}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">관련 개념</h4>
+                        <p className="text-sm">{question.analysis.openaiAnalysis.relatedConcepts}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-2">학습 포인트</h4>
+                        <p className="text-sm">{question.analysis.openaiAnalysis.learningPoints}</p>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="text-xs text-muted-foreground">
+                    분석 시간: {new Date(question.analysis.timestamp).toLocaleString()}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* 답변 목록 */}
           <div className="space-y-4">

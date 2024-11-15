@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const questionController = require('../../controllers/question-controller');
 const authenticate = require('../../middleware/auth-middleware');
-const { questionImageUpload } = require('../../middleware/upload-middleware');  // 수정된 부분
+const { questionImageUpload } = require('../../middleware/upload-middleware');
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
@@ -33,32 +33,40 @@ const uploadToCloudinary = async (req, res, next) => {
   }
 };
 
-// 라우트 정의
+// 일반 조회 라우트 (파라미터 없는 라우트 먼저)
 router.get('/', questionController.getQuestions);
-router.get('/my', authenticate, questionController.getMyQuestions);
 router.get('/search', questionController.searchQuestions);
-router.get('/:id', questionController.getQuestionById);
+router.get('/my', authenticate, questionController.getMyQuestions);
 
-// 이미지 업로드가 포함된 라우트
+// 질문 생성 라우트
 router.post('/', 
   authenticate, 
-  questionImageUpload,  // 수정된 부분
+  questionImageUpload,
   uploadToCloudinary,
   questionController.createQuestion
 );
 
+// ID 기반 질문 조회/수정/삭제 라우트
+router.get('/:id', questionController.getQuestionById);
 router.put('/:id', 
   authenticate, 
-  questionImageUpload,  // 수정된 부분
+  questionImageUpload,
   uploadToCloudinary,
   questionController.updateQuestion
 );
-
-// 나머지 라우트
 router.delete('/:id', authenticate, questionController.deleteQuestion);
+
+// 답변 관련 라우트
 router.post('/:id/answers', authenticate, questionController.addAnswer);
 router.delete('/:id/answers/:answerId', authenticate, questionController.deleteAnswer);
 router.patch('/:id/answers/:answerId/accept', authenticate, questionController.acceptAnswer);
+
+// 조회수 관련 라우트
 router.post('/:id/view', questionController.incrementView);
+
+// AI 분석 관련 라우트
+router.post('/:id/analyze', authenticate, questionController.analyzeQuestion);
+router.get('/:id/analysis', authenticate, questionController.getAnalysis);
+router.post('/:id/auto-analyze', authenticate, questionController.startAutoAnalysis);
 
 module.exports = router;

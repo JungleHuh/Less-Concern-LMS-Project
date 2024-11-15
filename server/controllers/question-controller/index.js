@@ -4,6 +4,7 @@ const cloudinary = require('cloudinary').v2;
 const path = require('path');
 const { spawn } = require('child_process');
 const PYTHON_PATH = process.env.PYTHON_PATH || 'python3';
+const { QuestionAnalysisService } = require('../../services/question-analysis-service')
 
 // 질문 목록 조회
 exports.getQuestions = async (req, res) => {
@@ -552,6 +553,245 @@ exports.incrementView = async (req, res) => {
     res.status(500).json({
       success: false,
       message: '조회수 업데이트에 실패했습니다.'
+    });
+  }
+};
+
+//ai 코드 (OpenAI)
+
+// ... 기존 코드는 유지 ...
+
+// 조회수 증가 코드 다음에 추가
+
+// AI 분석 관련 컨트롤러 함수들
+
+// AI 분석 실행
+exports.analyzeQuestion = async (req, res) => {
+  try {
+    console.log('Starting question analysis...');
+    const questionId = req.params.id;
+    const question = await Question.findById(questionId);
+
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: '질문을 찾을 수 없습니다.'
+      });
+    }
+
+    // OpenAI API 키 확인
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OpenAI API key is not configured');
+      return res.status(500).json({
+        success: false,
+        message: 'AI 서비스 설정이 필요합니다.'
+      });
+    }
+
+    try {
+      const analysisService = new QuestionAnalysisService(process.env.OPENAI_API_KEY);
+
+      // 분석 실행
+      const analysisResult = await analysisService.analyzeQuestion({
+        title: question.title,
+        content: question.content,
+        examType: question.examType,
+        subject: question.subject,
+        imageUrl: question.imageUrl,
+        extractedText: question.extractedText
+      });
+
+      // 분석 결과 저장
+      question.analysis = {
+        ...analysisResult,
+        timestamp: new Date()
+      };
+      await question.save();
+
+      console.log('Analysis completed successfully');
+      res.json({
+        success: true,
+        data: {
+          analysis: question.analysis
+        }
+      });
+    } catch (analysisError) {
+      console.error('Analysis service error:', analysisError);
+      throw new Error('AI 분석 처리 중 오류가 발생했습니다.');
+    }
+
+  } catch (error) {
+    console.error('Question analysis error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'AI 분석에 실패했습니다.'
+    });
+  }
+};
+
+// 분석 결과 조회
+exports.getAnalysis = async (req, res) => {
+  try {
+    const questionId = req.params.id;
+    const question = await Question.findById(questionId).select('analysis');
+
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: '질문을 찾을 수 없습니다.'
+      });
+    }
+
+    if (!question.analysis) {
+      return res.status(404).json({
+        success: false,
+        message: '분석 결과가 없습니다.'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        analysis: question.analysis
+      }
+    });
+
+  } catch (error) {
+    console.error('Get analysis error:', error);
+    res.status(500).json({
+      success: false,
+      message: '분석 결과 조회에 실패했습니다.'
+    });
+  }
+};
+
+// 자동 분석 시작
+exports.startAutoAnalysis = async (req, res) => {
+  try {
+    const questionId = req.params.id;
+    const question = await Question.findById(questionId);
+
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: '질문을 찾을 수 없습니다.'
+      });
+    }
+
+    // 이미 분석이 완료된 경우
+    if (question.analysis) {
+      return res.json({
+        success: true,
+        data: {
+          analysis: question.analysis
+        }
+      });
+    }
+
+    // OpenAI API 키 확인
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({
+        success: false,
+        message: 'AI 서비스 설정이 필요합니다.'
+      });
+    }
+
+    try {
+      const analysisService = new QuestionAnalysisService(process.env.OPENAI_API_KEY);
+      const analysisResult = await analysisService.analyzeQuestion({
+        title: question.title,
+        content: question.content,
+        examType: question.examType,
+        subject: question.subject,
+        imageUrl: question.imageUrl,
+        extractedText: question.extractedText
+      });
+
+      // 분석 결과 저장
+      question.analysis = {
+        ...analysisResult,
+        timestamp: new Date()
+      };
+      await question.save();
+
+      res.json({
+        success: true,
+        data: {
+          analysis: question.analysis
+        }
+      });
+    } catch (analysisError) {
+      console.error('Analysis service error:', analysisError);
+      throw new Error('AI 분석 처리 중 오류가 발생했습니다.');
+    }
+
+  } catch (error) {
+    console.error('Auto analysis error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || '자동 분석에 실패했습니다.'
+    });
+  }
+};
+
+// Question 생성 시 자동 분석을 위한 함수
+const handleAutoAnalysis = async (question) => {
+  if (!process.env.OPENAI_API_KEY || !question.imageUrl) {
+    return;
+  }
+
+  try {
+    const analysisService = new QuestionAnalysisService(process.env.OPENAI_API_KEY);
+    const analysisResult = await analysisService.analyzeQuestion({
+      title: question.title,
+      content: question.content,
+      examType: question.examType,
+      subject: question.subject,
+      imageUrl: question.imageUrl,
+      extractedText: question.extractedText
+    });
+
+    // 분석 결과 저장
+    question.analysis = {
+      ...analysisResult,
+      timestamp: new Date()
+    };
+    await question.save();
+    return question;
+  } catch (error) {
+    console.error('Auto analysis error:', error);
+    // 자동 분석 실패 시 에러를 throw하지 않고 원래 질문을 반환
+    return question;
+  }
+};
+
+// createQuestion 훅 수정
+exports.createQuestionWithAnalysis = async (req, res) => {
+  try {
+    // 기본 질문 생성
+    const question = await Question.create({
+      title: req.body.title,
+      content: req.body.content,
+      examType: req.body.examType,
+      subject: req.body.subject,
+      imageUrl: req.cloudinaryResult?.secure_url,
+      publicId: req.cloudinaryResult?.public_id,
+      extractedText: req.body.extractedText,
+      user: req.user._id
+    });
+
+    // 이미지가 있는 경우 자동 분석 시도
+    const analyzedQuestion = await handleAutoAnalysis(question);
+
+    res.status(201).json({
+      success: true,
+      data: analyzedQuestion
+    });
+  } catch (error) {
+    console.error('Create question error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || '질문 등록에 실패했습니다.'
     });
   }
 };
